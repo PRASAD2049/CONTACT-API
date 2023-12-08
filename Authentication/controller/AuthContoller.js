@@ -217,6 +217,16 @@ const ResetPasswordController = async function (req, res) {
     }
 }
 
+const LogoutController = async function(req, res) {
+
+    res.cookie("JWT", '', { maxAge: Date.now(), httpOnly: true, path: "/" });
+
+    res.status(200).json({
+        status: "success",
+        message: "user logged out "
+    })
+}
+
 function otpGenerator() {
     return Math.floor(100000 + Math.random() * 900000);
 }
@@ -225,5 +235,6 @@ module.exports = {
     SignupController,
     LoginContoller,
     ForgotPasswordController,
-    ResetPasswordController
+    ResetPasswordController,
+    LogoutController
 }

@@ -72,8 +72,7 @@ const getAllFactory = (ElementModal) => {
 
             
             if(pageNumber && pageSize) {
-console.log('pageNumber', pageNumber);
-console.log('pageSize', pageSize);
+
                 const elementsToSkip = (pageNumber - 1) * pageSize;
 
                 contactsPromise = contactsPromise.skip(elementsToSkip).limit(pageSize);

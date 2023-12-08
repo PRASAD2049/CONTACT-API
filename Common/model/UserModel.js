@@ -42,6 +42,32 @@ const UserSchemaRules = {
 
 const userSchema = mongoose.Schema(UserSchemaRules);
 
+let validRoles = ['ADMIN', "USER", 'SELLER'];
+
+userSchema.pre('save', (next) =>{
+
+    const user = this;
+
+    if(user.role) {
+
+        const isValid = validRoles.indexOf(user.role);
+
+        if(isValid) {
+            next();
+        } else {
+            next('Error: Invalid Role')
+        }
+
+    } else {
+
+        user.role = "USER";
+        
+        next();
+
+    }
+
+})
+
 const UserModel = mongoose.model('userModel', userSchema);
 
 module.exports = UserModel;

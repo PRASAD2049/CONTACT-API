@@ -52,8 +52,6 @@ async function sendEmailHelper(otp, htmlTemplate, userName, to) {
     const text = `Hi ${userName}
     Your otp to reset your password is ${otp}`;
 
-    // console.log('abcd');
-
     await emailSender(to, subject, finalHtmlCode, text);
 
 }

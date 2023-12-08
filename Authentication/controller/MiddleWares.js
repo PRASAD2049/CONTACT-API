@@ -14,15 +14,22 @@ const ProtectedRouteMiddleWare = async function (req, res, next) {
 
         let jwttoken = req.cookies.JWT;
 
-        console.log('jwttoken', jwttoken);
+        console.log('jwttoken 1', jwttoken);
 
-        const decryptedToken = await promisifiedJWTVerify(jwttoken, JWT_SECRET);
+        if (jwttoken) {
+            const decryptedToken = await promisifiedJWTVerify(jwttoken, JWT_SECRET);
 
-        if (decryptedToken) {
-            let userId = decryptedToken.id;
-            // adding the userId to the req object
-            req.userId = userId
-            next();
+            if (decryptedToken) {
+                let userId = decryptedToken.id;
+                // adding the userId to the req object
+                req.userId = userId
+                next();
+            }
+        } else {
+            res.status(500).json({
+                status: 'failure',
+                message: 'User is not logged in.'
+            })
         }
 
     } catch (error) {
@@ -38,7 +45,6 @@ const ProtectedRouteMiddleWare = async function (req, res, next) {
 }
 
 const isAdminMiddleWare = async function (req, res, next) {
-    console.log('req', req.userId);
 
     try {
         const user = await UserModel.findById(req.userId);
@@ -53,7 +59,7 @@ const isAdminMiddleWare = async function (req, res, next) {
                 status: "failure",
                 "message": "You are not authorized to do this action "
             })
-            
+
         }
 
 
@@ -67,7 +73,35 @@ const isAdminMiddleWare = async function (req, res, next) {
     }
 }
 
+const isAutherizedMiddleWare = function (allowedRoles) {
+
+    return async function (req, res, next) {
+
+        const id = req.userId;
+
+        const user = await UserModel.findById(id);
+
+        const isAuthorized = allowedRoles.includes(user.role);
+
+        if (isAuthorized) {
+
+            next();
+
+
+        } else {
+
+            res.status(401).json({
+                status: "failure",
+                "message": "You are not authorized to do this action "
+            })
+
+        }
+
+    }
+}
+
 module.exports = {
     ProtectedRouteMiddleWare,
-    isAdminMiddleWare
+    isAdminMiddleWare,
+    isAutherizedMiddleWare
 }
