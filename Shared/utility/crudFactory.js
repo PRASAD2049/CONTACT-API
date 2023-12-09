@@ -41,49 +41,49 @@ const getAllFactory = (ElementModal) => {
 
         try {
 
-            let contactsPromise = ElementModal.find();
+            let responsePromise = ElementModal.find();
 
             /** Sorting */
 
             if (sortKey) {
                 if (sortOrder === 'asc') {
 
-                    contactsPromise = contactsPromise.sort({ [sortKey]: 1 });
+                    responsePromise = responsePromise.sort({ [sortKey]: 1 });
 
                 } else {
 
-                    contactsPromise = contactsPromise.sort({ [sortKey]: -1 });
+                    responsePromise = responsePromise.sort({ [sortKey]: -1 });
 
                 }
             }
 
             /** Selecting fields */
 
-            if(selectQuery) {
+            if (selectQuery) {
 
-                contactsPromise = contactsPromise.select(selectQuery);
+                responsePromise = responsePromise.select(selectQuery);
 
             }
 
             /** Pagination */
 
-            const pageNumber = queryParams.pageNumber || 1;
-            const pageSize = queryParams.pageSize || 5;
+            const pageNumber = queryParams.pageNumber;
 
-            
-            if(pageNumber && pageSize) {
+            const pageSize = queryParams.pageSize;
+
+            if (pageNumber && pageSize) {
 
                 const elementsToSkip = (pageNumber - 1) * pageSize;
 
-                contactsPromise = contactsPromise.skip(elementsToSkip).limit(pageSize);
+                responsePromise = responsePromise.skip(elementsToSkip).limit(pageSize);
 
             }
 
+            const contacts = await responsePromise;
 
-            const contacts = await contactsPromise;
             res.status(200).json({
                 status: "success",
-                message: "Contact list fetched Successfully.",
+                message: "List fetched Successfully.",
                 response: contacts
             })
 
@@ -95,7 +95,7 @@ const getAllFactory = (ElementModal) => {
             })
 
         }
-        
+
     }
 
 }
@@ -107,6 +107,7 @@ const getByIdFactory = (ElementModal) => {
         try {
 
             const id = req.params.id
+            
             const contact = await ElementModal.findById(id);
 
             res.status(200).json({
@@ -132,7 +133,25 @@ const deleteByIdFactory = (ElementModal) => {
 
     return async function (req, res) {
 
+        const id = req.params.id;
 
+        try {
+            const element = await ElementModal.findByIdAndDelete(id);
+
+            res.status(200).json({
+                status: "Success",
+                response: element,
+                message: 'Element deleted successfully'
+            });
+
+        } catch (error) {
+
+            res.status(500).json({
+                status: "Success",
+                message: error.message
+            });
+
+        }
 
     }
 

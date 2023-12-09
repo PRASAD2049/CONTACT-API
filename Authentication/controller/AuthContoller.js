@@ -70,6 +70,7 @@ const LoginContoller = async function (req, res) {
                 res.status(200).json({
                     status: 'success',
                     message: 'Login success',
+                    token: token
                 })
 
 
@@ -219,7 +220,7 @@ const ResetPasswordController = async function (req, res) {
 
 const LogoutController = async function(req, res) {
 
-    res.cookie("JWT", '', { maxAge: Date.now(), httpOnly: true, path: "/" });
+    res.cookie("JWT", 'logout', { maxAge: Date.now(), httpOnly: true, path: "/" });
 
     res.status(200).json({
         status: "success",

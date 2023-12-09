@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const contactSchemaRules = {
+    type: {
+        type: String,
+        required: true,
+        default: 'Beneficiary'
+    },
     name: {
         type: String,
         required: true

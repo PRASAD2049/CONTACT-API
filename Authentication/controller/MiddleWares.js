@@ -14,11 +14,24 @@ const ProtectedRouteMiddleWare = async function (req, res, next) {
 
         let jwttoken = req.cookies.JWT;
 
-        console.log('jwttoken 1', jwttoken);
+        console.log('jwttoken', jwttoken);
+
+        let bearerHeader = req.headers['token'];
 
         if (jwttoken) {
             const decryptedToken = await promisifiedJWTVerify(jwttoken, JWT_SECRET);
 
+            if (decryptedToken) {
+                let userId = decryptedToken.id;
+                // adding the userId to the req object
+                req.userId = userId
+                next();
+            }
+        } else if (bearerHeader) {
+            const authToken = bearerHeader;
+            console.log('authToken', authToken);
+            const decryptedToken = await promisifiedJWTVerify(authToken, JWT_SECRET);
+console.log('decryptedToken', decryptedToken);
             if (decryptedToken) {
                 let userId = decryptedToken.id;
                 // adding the userId to the req object
